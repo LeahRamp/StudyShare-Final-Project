@@ -19,5 +19,5 @@ class PostSerializer(serializers.ModelSerializer):
 class PostReportSerializer(serializers.ModelSerializer):
     class Meta:
         model = PostReport
-        fields = ['id', 'post', 'reason', 'description', 'created_at', 'is_approved']
+        fields = ['id', 'post', 'reason', 'created_at', 'is_approved']
         read_only_fields = ['created_at', 'is_approved']
