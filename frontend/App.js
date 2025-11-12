@@ -9,8 +9,10 @@ import { useFonts } from 'expo-font';
 import { Inter_400Regular, Inter_700Bold } from '@expo-google-fonts/inter';
 import { PlayfairDisplay_700Bold } from '@expo-google-fonts/playfair-display';
 
-import Home from './screens/Home';
-import Explore from './screens/Explore';
+import Home from './src/app/screens/Home';
+import Explore from './src/app/screens/Explore';
+import { AuthProvider, useAuth } from './src/app/context/AuthContext';
+import AuthStack from './src/app/navigation/AuthStack';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -77,6 +79,28 @@ function HomeTabs() {
   );
 }
 
+function AppNav() {
+  const { user } = useAuth();
+
+  return (
+    <NavigationContainer>
+      { !user ? (
+        <Stack.Navigator initialRouteName="HomeTabs">
+          <Stack.Screen
+            name="HomeTabs"
+            component={HomeTabs}
+            options={{ headerShown: false }}
+          />
+        </Stack.Navigator>
+      ) : (
+        <AuthStack />
+      )}
+      <StatusBar style="auto" />
+    </NavigationContainer>
+  );
+}
+
+// added AppNav because useAuth has to be after AuthProvider
 export default function App() {
   const [fontsLoaded] = useFonts({
     Inter_400Regular,
@@ -89,15 +113,8 @@ export default function App() {
   }
 
   return (
-    <NavigationContainer> 
-      <Stack.Navigator initialRouteName="HomeTabs">
-        <Stack.Screen
-          name="HomeTabs"
-          component={HomeTabs}
-          options={{ headerShown: false }}
-        />
-      </Stack.Navigator>
-      <StatusBar style="auto" />
-    </NavigationContainer>
+    <AuthProvider>
+      <AppNav />
+    </AuthProvider>
   );
 }
