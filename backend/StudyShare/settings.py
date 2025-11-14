@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-y##i60ny3ey9=)^ey@$_2vcs1aqb+vl!iinoo^p*r+(st3a^w6
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['192.168.1.62', 'localhost']
 
 
 # Custom user model
@@ -74,10 +74,11 @@ REST_FRAMEWORK = {
     ],
 }
 
-# temp
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(days=1),
-    'REFRESH_TOKEN_LIFETIME': timedelta(days=7),
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=15),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=30),
+    'ROTATE_REFRESH_TOKENS': True,
+    'BLACKLIST_AFTER_ROTATION': True,
 }
 
 STATIC_URL = '/static/'

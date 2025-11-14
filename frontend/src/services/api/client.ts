@@ -1,5 +1,6 @@
 import axios from 'axios';
-import { getAccessToken, getRefreshToken, saveTokens } from '../tokenService';
+import { clearTokens, getAccessToken, getRefreshToken, saveTokens } from '../tokenService';
+import { processDrfErrors } from '../../utils/processDrfErrors';
 
 const PROTECTED_PATHS = [
   "user/",
@@ -9,7 +10,6 @@ const PROTECTED_PATHS = [
 
 const isProtected = (url?: string) => {
   if (!url) return false
-
   return PROTECTED_PATHS.some(path => url.includes(path));
 }
 
@@ -20,7 +20,6 @@ export const api = axios.create({
 });
 
 api.interceptors.request.use(async (config) => {
-  console.log("Request:", config.url, config.headers.Authorization, config.data); // TODO: temp line
   if (isProtected(config.url)) {
     const token = await getAccessToken();
     if (token) config.headers.Authorization = `Bearer ${token}`;
@@ -29,37 +28,44 @@ api.interceptors.request.use(async (config) => {
 });
 
 
-async function refreshTokenApi() {
-  const refresh = getRefreshToken();
+export async function refreshTokenApi() {
+  const refresh = await getRefreshToken();
+  if (!refresh) throw new Error("No refresh token found");
+
   const { data } = await api.post("/accounts/token-refresh/", { refresh });
-  if (data.access && data.refresh) await saveTokens(data.access, data.refresh);
+  await saveTokens(data.access, data.refresh);
   return data.access
 }
 
 
 api.interceptors.response.use(
   res => {
-    console.log("response success:", res.status, res.config.url, res.data); // TODO: temp block
     return res;
   },
   async (error) => {
-    const { config, response } = error;
-    console.log("response Error:", response._retry, response.status, response.data) // TODO: temp line
-    
-    if (error.code === 'ECONNABORTED') {
-      console.log("request timed out");
-      return Promise.reject({ message: 'request timed out'})
+    const { config, response, code } = error;
+
+    if (code === 'ECONNABORTED') {
+      return Promise.reject({ message: 'request timed out.'});
+    }
+
+    if (!response) {
+      return Promise.reject({ message: 'Server Connection Error.'});
     }
     
     if (response?.status == 401 && !config._retry && isProtected(config.url)) {
       config._retry = true;
-      
-      const access = await refreshTokenApi()
-      
-      if (access) {
-      return api(config.headers.Authorization = `Bearer ${access}`);
-    }
-  } 
+      try {
+        const access = await refreshTokenApi()
+        config.headers.Authorization = `Bearer ${access}`;
+        return api(config);
+      } catch {
+        await clearTokens();
+        return Promise.reject({ message: 'Session expired. Please login again.'});
+      }
+    } 
   
-  return Promise.reject(error);
-})
+  const processed = processDrfErrors(response.data)
+  return Promise.reject(processed);
+  }
+)

@@ -1,6 +1,7 @@
-import React, { createContext, useContext, useState } from "react";
-import { signInApi, signUpApi } from "../../services/api/auth";
+import React, { createContext, useContext, useEffect, useState } from "react";
+import { getUserApi, signInApi, signUpApi } from "../../services/api/auth";
 import { saveTokens, clearTokens } from '../../services/tokenService';
+import { refreshTokenApi } from "../../services/api/client";
 
 interface User {
   id: number;
@@ -22,14 +23,27 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
+  useEffect(() => {
+    const initAuth = async () => {
+      try {
+        await refreshTokenApi();
+        const userData = await getUserApi();
+        setUser(userData)
+      } catch (error) {
+        console.log('fail to load', error);
+      }
+    }
+    initAuth();
+  }, []);
+  
   const handleAuth = async (apiCall: ()  => Promise<any>) => {
     setIsLoading(true);
     try {
       const { data } = await apiCall();
-      setUser(data.user);
       await saveTokens(data.tokens.access, data.tokens.refresh);
-    } catch (err) {
-      throw err
+      setUser(data.user);
+    } catch (error) {
+      throw error;
     } finally {
       setIsLoading(false);
     }

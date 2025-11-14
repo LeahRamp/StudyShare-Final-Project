@@ -1,13 +1,13 @@
-import { KeyboardAvoidingView, Platform, StyleSheet, TextInput, View } from 'react-native'
+import { KeyboardAvoidingView, Platform, StyleSheet, Text, TextInput, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context';
 import LogoWithIcon from '../components/LogoWithIcon';
 import InputBox from '../components/InputBox';
 import BigButton from '../components/BigButton';
-import { useNavigation } from '@react-navigation/native';
 import { useRef, useState } from 'react';
+import { useAuth } from '../context/AuthContext';
 
 export default function SignInScreen() {
-  const navigation = useNavigation<any>();
+  const { signUp } = useAuth();
 
   const displayNameRef = useRef<TextInput>(null);
   const emailRef = useRef<TextInput>(null);
@@ -18,11 +18,18 @@ export default function SignInScreen() {
     email: '',
     password: '',
   })
+  const [errorMessages, setErrorMessages] = useState<{ [key: string]: string }>({});
+  const [generalError, setGeneralError] = useState('');
 
-
-
-  const handleSignUp = () => {
-    console.log(form)
+  const handleSignUp = async () => {
+    setErrorMessages({});
+    setGeneralError('');
+    try {
+      await signUp(form.email, form.password, form.displayName);
+    } catch (error) {
+      setErrorMessages(error.fieldErrors || {});
+      setGeneralError(error.message);
+    }
   }
 
   return (
@@ -33,6 +40,7 @@ export default function SignInScreen() {
       >
         <LogoWithIcon />
         <View style={styles.inputs}>
+          <Text style={styles.error}>{generalError}</Text>
           <InputBox
             ref={displayNameRef}
             placeholder='Display Name'
@@ -40,6 +48,7 @@ export default function SignInScreen() {
             value={form.displayName}
             onChangeText={(value) => setForm({ ...form, displayName: value })}
             onSubmitEditing={() => emailRef.current?.focus()}
+            error={errorMessages.display_name}
           />
           <InputBox
             ref={emailRef}
@@ -48,6 +57,7 @@ export default function SignInScreen() {
             value={form.email}
             onChangeText={(value) => setForm({ ...form, email: value })}
             onSubmitEditing={() => passwordRef.current?.focus()}
+            error={errorMessages.email}
           />
           <InputBox
             ref={passwordRef}
@@ -56,6 +66,7 @@ export default function SignInScreen() {
             value={form.password}
             onChangeText={(value) => setForm({ ...form, password: value })}
             onSubmitEditing={handleSignUp}
+            error={errorMessages.password}
           />
         </View>
         <BigButton text='Register' onPress={handleSignUp} />
@@ -75,6 +86,10 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     padding: 16,
+  },
+  error: {
+    color: '#f00',
+    textAlign: 'center',
   },
   inputs: {
     marginTop: 32,

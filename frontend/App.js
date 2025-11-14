@@ -84,7 +84,7 @@ function AppNav() {
 
   return (
     <NavigationContainer>
-      { !user ? (
+      { user ? (
         <Stack.Navigator initialRouteName="HomeTabs">
           <Stack.Screen
             name="HomeTabs"
