@@ -1,40 +1,36 @@
-import { StyleSheet, Text, View, FlatList } from 'react-native';
-import React, { useState } from 'react';
+import { StyleSheet, Text, View, FlatList, ActivityIndicator } from 'react-native';
+import React, { useState, useEffect } from 'react';
 import PostCard from '../components/PostCard';
-
-const dummyPosts = [
-  {
-    id: 1,
-    username: 'John Doe',
-    profile_image: 'https://i.pravatar.cc/150?img=1',
-    text: 'Just finished my first React Native app!',
-    link: 'https://reactnative.dev/',
-    image: 'https://picsum.photos/200/300',
-    document: 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf',
-  },
-  {
-    id: 2,
-    username: 'Jane Smith',
-    profile_image: 'https://i.pravatar.cc/150?img=2',
-    text: 'Check out this cool article!',
-    link: 'https://www.example.com',
-    image: null,
-    document: null,
-  },
-  {
-    id: 3,
-    username: 'Alex92',
-    profile_image: 'https://i.pravatar.cc/150?img=3',
-    text: 'No attachments here, just text!',
-    link: null,
-    image: null,
-    document: null,
-  },
-];
+import { getPostsApi } from '../../services/api/posts';
 
 
 const Home = () => {
-  const [posts, setPosts] = useState(dummyPosts);
+  const [posts, setPosts] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchPosts = async () => {
+      try {
+        const data = await getPostsApi();
+        setPosts(data);
+      } catch (err) {
+        console.error('Error fetching posts:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchPosts();
+  }, []);
+
+  if (loading) {
+    return (
+      <View style={styles.loaderContainer}>
+        <ActivityIndicator size="large" color="#FBAC74" />
+      </View>
+    );
+  }
+
 
   return (
     <View style={styles.container}>
@@ -51,6 +47,11 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#ffffffff',
+  },
+  loaderContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
 

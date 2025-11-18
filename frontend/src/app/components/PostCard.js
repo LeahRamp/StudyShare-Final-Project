@@ -1,10 +1,12 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity, Linking } from 'react-native';
 import { Ionicons, Entypo } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
+import { likePostApi } from '../../services/api/posts';
 
 const PostCard = ({ post }) => {
   const navigation = useNavigation();
+  const [liked, setLiked] = useState(post.is_liked ?? false);
 
   const handleLinkPress = (url) => {
     if (url) Linking.openURL(url);
@@ -12,6 +14,15 @@ const PostCard = ({ post }) => {
 
   const handleDocumentPress = (docUrl) => {
     if (docUrl) Linking.openURL(docUrl);
+  };
+
+  const handleLike = async () => {
+    try {
+      await likePostApi(post.id);
+      setLiked(!liked);
+    } catch (error) {
+      console.error("Error liking post:", error);
+    }
   };
 
   return (
@@ -22,7 +33,7 @@ const PostCard = ({ post }) => {
           <View style={styles.userSection}>
             <Image source={{ uri: post.profile_image }} style={styles.avatar} />
             <View>
-              <Text style={styles.username}>{post.username}</Text>
+              <Text style={styles.username}>{post.author}</Text>
               <Text style={styles.subtext}>Shared a post</Text>
             </View>
           </View>
@@ -56,8 +67,13 @@ const PostCard = ({ post }) => {
 
         {/* Footer - Like Button */}
         <View style={styles.footer}>
-          <TouchableOpacity style={styles.likeButton}>
-            <Ionicons name="heart-outline" size={22} color="#ff7b7b" />
+          <TouchableOpacity style={styles.likeButton} onPress={handleLike}>
+            <Ionicons 
+              name={liked ? "heart" : "heart-outline"}
+              size={22} 
+              color={liked ? "#ff7b7b" : "#ff4d4d"}
+
+              />
           </TouchableOpacity>
         </View>
       </View>
