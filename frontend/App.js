@@ -11,6 +11,7 @@ import { PlayfairDisplay_700Bold } from '@expo-google-fonts/playfair-display';
 
 import Home from './src/app/screens/Home';
 import Explore from './src/app/screens/Explore';
+import AddPost from './src/app/screens/AddPost';
 import { AuthProvider, useAuth } from './src/app/context/AuthContext';
 import AuthStack from './src/app/navigation/AuthStack';
 
@@ -90,6 +91,26 @@ function AppNav() {
             name="HomeTabs"
             component={HomeTabs}
             options={{ headerShown: false }}
+          />
+          <Stack.Screen 
+            name="AddPost"
+            component={AddPost}
+            options={{
+              title: 'AddPost',
+              headerShown: true,
+              headerTitleAlign: 'center', 
+              headerTitle: () => (
+                <View>
+                  <Text style={{ 
+                    fontSize: 20, 
+                    fontFamily: 'PlayfairDisplay_700Bold', 
+                    color: 'black' 
+                  }}>
+                    New Post
+                  </Text>
+                </View>
+              ),
+            }}
           />
         </Stack.Navigator>
       ) : (
