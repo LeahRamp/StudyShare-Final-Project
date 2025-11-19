@@ -34,14 +34,14 @@ class UserManager(BaseUserManager):
     extra_fields.setdefault('is_superuser', True)
     return self.create_user(email, password, **extra_fields)
 
+
 def upload_profile_picture(instance, filename):
   """
   Returns the path where profile pictures will be stored
-  Uses user ID to name the file
+  Removed filename being id to avoid caching issues
   """
-  extension = filename.split('.')[-1]
-  path = f'profile_pictures/{instance.id}.{extension}'
-  return path
+  return f'profile_pictures/{instance.id}/{filename}'
+  
 
 class User(AbstractBaseUser, PermissionsMixin):
   """
@@ -69,9 +69,10 @@ class User(AbstractBaseUser, PermissionsMixin):
     """
     try:
       old_profile = User.objects.get(pk=self.pk)
-      if old_profile.profile_picture and self.profile_picture != old_profile.profile_picture:
+      if old_profile.profile_picture and old_profile.profile_picture != self.profile_picture:
         if default_storage.exists(old_profile.profile_picture.name):
           default_storage.delete(old_profile.profile_picture.name)
     except User.DoesNotExist:
-      pass
+      old_profile = None
+
     super().save(*args, **kwargs)

@@ -1,4 +1,4 @@
-import { KeyboardAvoidingView, Platform, StyleSheet, Text, TextInput, View } from 'react-native'
+import { Keyboard, KeyboardAvoidingView, Platform, StyleSheet, Text, TextInput, TouchableWithoutFeedback, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context';
 import LogoWithIcon from '../components/LogoWithIcon';
 import InputBox from '../components/InputBox';
@@ -34,43 +34,45 @@ export default function SignInScreen() {
 
   return (
     <SafeAreaView style={styles.safeAreaView}>
-      <KeyboardAvoidingView
-        style={styles.keyboardView}
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      >
-        <LogoWithIcon />
-        <View style={styles.inputs}>
-          <Text style={styles.error}>{generalError}</Text>
-          <InputBox
-            ref={displayNameRef}
-            placeholder='Display Name'
-            returnKeyType='next'
-            value={form.displayName}
-            onChangeText={(value) => setForm({ ...form, displayName: value })}
-            onSubmitEditing={() => emailRef.current?.focus()}
-            error={errorMessages.display_name}
-          />
-          <InputBox
-            ref={emailRef}
-            type='email'
-            returnKeyType='next'
-            value={form.email}
-            onChangeText={(value) => setForm({ ...form, email: value })}
-            onSubmitEditing={() => passwordRef.current?.focus()}
-            error={errorMessages.email}
-          />
-          <InputBox
-            ref={passwordRef}
-            type='password'
-            returnKeyType='done'
-            value={form.password}
-            onChangeText={(value) => setForm({ ...form, password: value })}
-            onSubmitEditing={handleSignUp}
-            error={errorMessages.password}
-          />
-        </View>
-        <BigButton text='Register' onPress={handleSignUp} />
-      </KeyboardAvoidingView>
+      <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+        <KeyboardAvoidingView
+          style={styles.keyboardView}
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        >
+          <LogoWithIcon />
+          <View style={styles.inputs}>
+            <Text style={styles.error}>{generalError}</Text>
+            <InputBox
+              ref={displayNameRef}
+              placeholder='Display Name'
+              returnKeyType='next'
+              value={form.displayName}
+              onChangeText={(value) => setForm({ ...form, displayName: value })}
+              onSubmitEditing={() => emailRef.current?.focus()}
+              error={errorMessages.display_name}
+            />
+            <InputBox
+              ref={emailRef}
+              type='email'
+              returnKeyType='next'
+              value={form.email}
+              onChangeText={(value) => setForm({ ...form, email: value })}
+              onSubmitEditing={() => passwordRef.current?.focus()}
+              error={errorMessages.email}
+            />
+            <InputBox
+              ref={passwordRef}
+              type='password'
+              returnKeyType='done'
+              value={form.password}
+              onChangeText={(value) => setForm({ ...form, password: value })}
+              onSubmitEditing={handleSignUp}
+              error={errorMessages.password}
+            />
+          </View>
+          <BigButton text='Register' onPress={handleSignUp} />
+        </KeyboardAvoidingView>
+      </TouchableWithoutFeedback>
     </SafeAreaView>
   )
 }

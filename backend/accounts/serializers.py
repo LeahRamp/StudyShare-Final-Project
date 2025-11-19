@@ -20,35 +20,9 @@ class SignUpSerializer(serializers.ModelSerializer):
 
 
 class UserProfileSerializer(serializers.ModelSerializer):
-  """
-  Serializer for updating user profile info
-  profile_picture cannot be removed
-  """
-  profile_picture = serializers.ImageField(required=False)
-
   class Meta:
     model = User
     fields = ['display_name', 'profile_picture', 'profile_description']
-
-  def validate_display_name(self, value):
-    """
-    Ensure display_name is not empty and doesn't exceed 20 characters
-    """
-    value = value.strip()
-    if not value:
-      raise serializers.ValidationError('Display name cannot be empty')
-    if len(value) > 20:
-      raise serializers.ValidationError('Display name cannot be exceed 20 characters')
-    return value
-  
-  def validate_profile_description(self, value):
-    """
-    Ensure profile description does not exceed 200 characters
-    """
-    if value and len(value) > 100:
-      raise serializers.ValidationError('Profile description cannot exceed 200 characters')
-    return value
-
 
 class PasswordChangeSerializer(serializers.Serializer):
   """

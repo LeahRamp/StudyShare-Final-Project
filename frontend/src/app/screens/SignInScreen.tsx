@@ -1,4 +1,4 @@
-import { Keyboard, KeyboardAvoidingView, Platform, StyleSheet, Text, TextInput, TouchableNativeFeedback, View } from 'react-native'
+import { Keyboard, KeyboardAvoidingView, Platform, StyleSheet, Text, TextInput, TouchableWithoutFeedback, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context';
 import LogoWithIcon from '../components/LogoWithIcon';
 import InputBox from '../components/InputBox';
@@ -29,7 +29,7 @@ export default function SignInScreen() {
 
   return (
     <SafeAreaView style={styles.safeAreaView}>
-      <TouchableNativeFeedback onPress={Keyboard.dismiss}>
+      <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
         <KeyboardAvoidingView
           style={styles.keyboardView}
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
@@ -56,7 +56,7 @@ export default function SignInScreen() {
           </View>
           <BigButton text='Login' onPress={handleSignIn} />
         </KeyboardAvoidingView>
-      </TouchableNativeFeedback>
+      </TouchableWithoutFeedback>
     </SafeAreaView>
   )
 }

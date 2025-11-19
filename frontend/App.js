@@ -6,12 +6,14 @@ import { createStackNavigator } from '@react-navigation/stack';
 import { Ionicons } from "@expo/vector-icons";
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { useFonts } from 'expo-font';
-import { Inter_400Regular, Inter_700Bold } from '@expo-google-fonts/inter';
-import { PlayfairDisplay_700Bold } from '@expo-google-fonts/playfair-display';
+import { Inter_200ExtraLight, Inter_400Regular, Inter_500Medium, Inter_700Bold } from '@expo-google-fonts/inter';
+import { PlayfairDisplay_700Bold, PlayfairDisplay_800ExtraBold } from '@expo-google-fonts/playfair-display';
 
 import Home from './src/app/screens/Home';
 import Explore from './src/app/screens/Explore';
 import AddPost from './src/app/screens/AddPost';
+import Profile from './src/app/screens/Profile';
+import UpdateProfile from './src/app/screens/UpdateProfile';
 import { AuthProvider, useAuth } from './src/app/context/AuthContext';
 import AuthStack from './src/app/navigation/AuthStack';
 
@@ -76,6 +78,17 @@ function HomeTabs() {
           ),
         }}
       />
+      <Tab.Screen 
+        name="Profile"
+        component={Profile}
+        options={{
+          title: 'Profile',
+          headerShown: false,
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="person" size={size} color={color} />
+          ),
+        }}
+      />
     </Tab.Navigator>
   );
 }
@@ -112,6 +125,11 @@ function AppNav() {
               ),
             }}
           />
+          <Stack.Screen
+            name="UpdateProfile"
+            component={UpdateProfile}
+            options={{ headerShown: false, title: 'Update Profile' }}
+          />
         </Stack.Navigator>
       ) : (
         <AuthStack />
@@ -124,9 +142,12 @@ function AppNav() {
 // added AppNav because useAuth has to be after AuthProvider
 export default function App() {
   const [fontsLoaded] = useFonts({
+    Inter_200ExtraLight,
     Inter_400Regular,
+    Inter_500Medium,
     Inter_700Bold,
     PlayfairDisplay_700Bold,
+    PlayfairDisplay_800ExtraBold,
   });
 
   if (!fontsLoaded) {

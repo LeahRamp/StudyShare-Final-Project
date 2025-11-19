@@ -4,13 +4,14 @@ import { saveTokens, clearTokens } from '../../services/tokenService';
 import { refreshTokenApi } from "../../services/api/client";
 
 interface User {
-  id: number;
-  email: string;
   display_name: string;
+  profile_description: string;
+  profile_picture: string;
 }
 
 interface AuthContextValue {
   user: User | null;
+  updateUser: () => Promise<void>;
   isLoading: boolean;
   signIn: (email: string, password: string) => Promise<void>;
   signUp: (email: string, password: string, display_name: string) => Promise<void>;
@@ -27,15 +28,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const initAuth = async () => {
       try {
         await refreshTokenApi();
-        const userData = await getUserApi();
-        setUser(userData)
+        await updateUser();
       } catch (error) {
         console.log('fail to load', error);
       }
     }
     initAuth();
   }, []);
-  
+
   const handleAuth = async (apiCall: ()  => Promise<any>) => {
     setIsLoading(true);
     try {
@@ -62,8 +62,13 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     await clearTokens();
   };
 
+  const updateUser = async () => {
+    const userData = await getUserApi();
+    setUser(userData);
+  }
+
   return (
-    <AuthContext.Provider value={{ isLoading, user, signIn, signUp, signOut }}>
+    <AuthContext.Provider value={{ isLoading, user, signIn, signUp, signOut, updateUser }}>
       {children}
     </AuthContext.Provider>
   );
