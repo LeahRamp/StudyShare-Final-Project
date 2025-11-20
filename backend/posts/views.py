@@ -1,9 +1,9 @@
 from rest_framework import generics, permissions, status, filters
-
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from .models import Post, PostReport
 from .serializers import PostSerializer, PostReportSerializer
+from django_filters.rest_framework import DjangoFilterBackend
 
 # Create your views here.
 
@@ -22,7 +22,8 @@ class PostListView(generics.ListAPIView):
     queryset = Post.objects.all().order_by('-created_at')
     serializer_class = PostSerializer
     permission_classes = [permissions.AllowAny]
-    filter_backends = [filters.SearchFilter]
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter]
+    filterset_fields = ['subject']
     search_fields = ['subject', 'title']
 
 

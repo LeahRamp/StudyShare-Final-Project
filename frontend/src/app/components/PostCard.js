@@ -45,6 +45,7 @@ const PostCard = ({ post }) => {
         </View>
 
         {/* Text Content */}
+        {post.title ? <Text style={styles.title}>{post.title}</Text> : null}
         {post.text ? <Text style={styles.text}>{post.text}</Text> : null}
 
         {/* Optional Link */}
@@ -126,6 +127,13 @@ const styles = StyleSheet.create({
     color: '#333',
     marginVertical: 10,
     lineHeight: 20,
+  },
+  title: {
+    fontFamily: 'PlayfairDisplay_700Bold',
+    fontSize: 17,
+    color: '#333',
+    marginVertical: 5,
+    paddingTop: 15,
   },
   link: {
     fontFamily: 'Inter_400Regular',

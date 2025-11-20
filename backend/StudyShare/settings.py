@@ -71,6 +71,7 @@ REST_FRAMEWORK = {
     ),
     'DEFAULT_FILTER_BACKENDS': [
         'rest_framework.filters.SearchFilter',
+        'django_filters.rest_framework.DjangoFilterBackend',
     ],
 }
 
