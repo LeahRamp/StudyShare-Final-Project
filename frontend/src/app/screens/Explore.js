@@ -139,12 +139,12 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
-    paddingTop: 40,
   },
   searchBox: {
     backgroundColor: '#F6F6F6',
     borderRadius: 10,
     padding: 12,
+    margin: 15,
     marginBottom: 15,
   },
   searchInput: {
