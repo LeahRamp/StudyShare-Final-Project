@@ -31,7 +31,7 @@ const PostCard = ({ post }) => {
         {/* Header */}
         <View style={styles.header}>
           <View style={styles.userSection}>
-            <Image source={{ uri: post.profile_image }} style={styles.avatar} />
+            <Image source={{ uri: post.author_profile_image }} style={styles.avatar} />
             <View>
               <Text style={styles.username}>{post.author}</Text>
               <Text style={styles.subtext}>Shared a post</Text>

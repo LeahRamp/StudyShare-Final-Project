@@ -4,13 +4,14 @@ from .models import Post, PostReport
 
 class PostSerializer(serializers.ModelSerializer):
     author = serializers.CharField(source='author.display_name', read_only=True)
+    author_profile_image = serializers.ImageField(source='author.profile_picture', read_only=True)
     likes_count = serializers.IntegerField(source='likes.count', read_only=True)
     is_liked = serializers.SerializerMethodField()
 
     class Meta:
         model = Post
-        fields = ['id', 'author', 'subject', 'title', 'text', 'created_at', 'link', 'image', 'document', 'likes_count', 'is_liked']
-        read_only_fields = ['id', 'author', 'created_at', 'likes_count', 'is_liked']
+        fields = ['id', 'author', 'author_profile_image', 'subject', 'title', 'text', 'created_at', 'link', 'image', 'document', 'likes_count', 'is_liked']
+        read_only_fields = ['id', 'author', 'author_profile_image', 'created_at', 'likes_count', 'is_liked']
 
     def get_is_liked(self, obj):
         user = self.context.get('request').user
