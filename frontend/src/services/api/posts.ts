@@ -34,8 +34,38 @@ export async function getLikedPostsApi() {
 }
 
 // Create a new post 
-export async function createPostApi(postData: Partial<Post>) {
-  const res = await api.post("/posts/create/", postData);
+export async function createPostApi(postData) {
+  const sendData = new FormData();
+  console.log(postData)
+
+  for (const key in postData) {
+    if (key !== 'document' && key !== 'image' && postData[key]) {
+      sendData.append(key, postData[key]);
+    };
+  };
+
+  if (postData.image) {
+    sendData.append('image', {
+      uri: postData.image.uri,
+      type: postData.image.mimeType,
+      name: postData.image.fileName,
+    } as any)
+  }
+  
+  if (postData.document) {
+    sendData.append('document', {
+      uri: postData.document.uri,
+      type: postData.document.mimeType,
+      name: postData.document.name,
+    } as any);
+  }
+
+  const res = await api.post("/posts/create/", sendData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    }
+  });
+
   return res.data;
 }
 

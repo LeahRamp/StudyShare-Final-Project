@@ -18,6 +18,7 @@ export default function UpdateProfile() {
     display_name: user.display_name,
     profile_description: user.profile_description || '',
     profile_picture: user.profile_picture,
+    pfp_info: {fileName: '', mimeType: ''},
   })
   const [errorMessage, setErrorMessage] = useState<{ [key: string]:string }>({});
 
@@ -45,10 +46,11 @@ export default function UpdateProfile() {
         aspect: [1, 1],
         quality: 0.7,
       });
+      console.log(result)
 
       if (result.canceled) return;
 
-      setForm({ ...form, profile_picture: result.assets[0].uri});
+      setForm({ ...form, profile_picture: result.assets[0].uri, pfp_info: {fileName: result.assets[0].fileName, mimeType: result.assets[0].mimeType}});
     } catch (error) {
       console.log(error.message || "Unknown Error");
     }

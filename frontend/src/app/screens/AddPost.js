@@ -16,7 +16,7 @@ const AddPost = ({ navigation }) => {
 
     const pickImage = async () => {
         let result = await ImagePicker.launchImageLibraryAsync({
-            mediaTypes: ImagePicker.MediaType.Images,
+            mediaTypes: 'images',
             quality: 1,
         });
 
@@ -28,7 +28,7 @@ const AddPost = ({ navigation }) => {
     const pickDocument = async () => {
         let result = await DocumentPicker.getDocumentAsync({ type: "*/*" });
         if (result.type !== "cancel") {
-            setDocument(result);
+            setDocument(result.assets[0]);
         }
     };
 

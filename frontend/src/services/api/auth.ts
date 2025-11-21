@@ -27,8 +27,8 @@ export async function updateUserApi(userData) {
   if (userData.profile_picture && userData.profile_picture.startsWith('file')) {
     sendData.append('profile_picture', {
       uri: userData.profile_picture,
-      type: 'image/jpeg',
-      name: 'profile.jpg',
+      type: userData.pfp_info.mimeType,
+      name: userData.pfp_info.fileName,
     } as any);
   }
 
