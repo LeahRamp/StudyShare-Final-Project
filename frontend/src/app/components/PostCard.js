@@ -1,12 +1,18 @@
 import React, { useState } from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity, Linking } from 'react-native';
 import { Ionicons, Entypo } from '@expo/vector-icons';
-import { useNavigation } from '@react-navigation/native';
-import { likePostApi } from '../../services/api/posts';
+import { likePostApi, reportPost } from '../../services/api/posts';
+import { useAuth } from '../context/AuthContext';
+import ReportModal from './ReportModal';
+import DeleteModal from './DeleteModal';
 
 const PostCard = ({ post }) => {
-  const navigation = useNavigation();
+  const { user } = useAuth();
   const [liked, setLiked] = useState(post.is_liked ?? false);
+
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [reportOpen, setReportOpen] = useState(false);
+  const [deleteOpen, setDeleteOpen] = useState(false);
 
   const handleLinkPress = (url) => {
     if (url) Linking.openURL(url);
@@ -25,6 +31,23 @@ const PostCard = ({ post }) => {
     }
   };
 
+  const handleReport = async (reason) => {
+    try {
+      await reportPost(post.id, reason);
+      console.log('Post report for:', post.id)
+    } catch (error) {
+      console.error('Error reporting:', error)
+    }
+  }
+
+  const handleDelete = async () => {
+    try {
+      console.log('Post delete request for:', post.id)
+    } catch (error) {
+      console.error('Error deleting post:', error)
+    }
+  }
+
   return (
     <View style={styles.cardWrapper}>
       <View style={styles.card}>
@@ -39,9 +62,30 @@ const PostCard = ({ post }) => {
           </View>
 
           {/* 3-dot menu */}
-          <TouchableOpacity onPress={() => navigation.navigate('Report', { postId: post.id })}>
+          <TouchableOpacity
+            onPress={() => setMenuOpen(!menuOpen)}
+            style={styles.menuButton}
+          >
             <Entypo name="dots-three-horizontal" size={18} color="#FBAC74" />
           </TouchableOpacity>
+          { menuOpen && (
+          <View style={styles.menuContainer}>
+            <TouchableOpacity
+              onPress={() => setReportOpen(true)}
+              style={styles.menuOption}
+            >
+              <Text style={styles.menuOptionText}>Report</Text>
+            </TouchableOpacity>
+            { post.author === user.display_name && (
+              <TouchableOpacity
+                onPress={() => setDeleteOpen(true)}
+                style={styles.menuOption}
+              >
+                <Text style={styles.menuOptionText}>Delete</Text>
+              </TouchableOpacity>
+            )}
+          </View>
+          )}
         </View>
 
         {/* Text Content */}
@@ -81,6 +125,8 @@ const PostCard = ({ post }) => {
 
       {/* Divider line between posts */}
       <View style={styles.divider} />
+      <ReportModal isOpen={reportOpen} onRequestClose={() => setReportOpen(false)} onSubmit={handleReport} />
+      <DeleteModal isOpen={deleteOpen} onRequestClose={() => setDeleteOpen(false)} onSubmit={handleDelete} />
     </View>
   );
 };
@@ -175,6 +221,30 @@ const styles = StyleSheet.create({
     backgroundColor: '#e7e7e7ff', 
 
   },
+  menuButton: {
+    padding: 4,
+  },
+  menuContainer: {
+    position: 'absolute',
+    top: 40,
+    right: 0,
+    zIndex: 10,
+    minWidth: 80,
+    backgroundColor: '#e7e7e7ff',
+    borderRadius: 6,
+    paddingVertical: 6,
+    borderWidth: 1,
+    borderColor: '#ccc'
+  },
+  menuOption: {
+    padding: 8,
+    // borderBottomWidth: 1,
+  },
+  menuOptionText: {
+    textAlign: 'right',
+    fontFamily: 'Inter_500Medium',
+    fontSize: 14,
+  }
 });
 
 export default PostCard;
