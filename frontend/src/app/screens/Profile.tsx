@@ -8,7 +8,7 @@ import { getLikedPostsApi, getMyPostsApi } from '../../services/api/posts';
 
 export default function Profile() {
   const navigation = useNavigation<any>();
-  const { user } = useAuth();
+  const { user, signOut } = useAuth();
   const [activeTab, setActiveTab] = useState<('posts' | 'liked')>('posts')
 
   const [myPosts, setMyPosts] = useState([]);
@@ -39,7 +39,10 @@ export default function Profile() {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
-        <Pressable style={styles.updateButton} onPress={() => navigation.navigate('UpdateProfile')}><Text style={styles.updateButtonText}>Update Profile</Text></Pressable>
+        <View style={styles.headerRow}>
+          <Pressable style={styles.logoutButton} onPress={signOut}><Text style={styles.updateButtonText}>Logout</Text></Pressable>
+          <Pressable style={styles.updateButton} onPress={() => navigation.navigate('UpdateProfile')}><Text style={styles.updateButtonText}>Update Profile</Text></Pressable>
+        </View>
         <View style={styles.profileInfo}>
           <Image style={styles.profileImage} source={{ uri: user.profile_picture }} />
           <Text style={styles.displayName}>{user.display_name}</Text>
@@ -75,6 +78,16 @@ const styles = StyleSheet.create({
   },
   header: {
     padding: 16,
+  },
+  headerRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 16,
+  },
+  logoutButton: {
+    padding: 8,
+    backgroundColor: '#dd3939ff',
+    borderRadius: 100,
   },
   updateButton: {
     alignSelf: 'flex-end',
