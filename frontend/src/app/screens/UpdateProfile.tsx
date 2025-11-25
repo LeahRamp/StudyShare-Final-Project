@@ -89,6 +89,7 @@ export default function UpdateProfile() {
               placeholder='Profile Description'
               value={form.profile_description}
               onChangeText={(value) => setForm({ ...form, profile_description: value})}
+              error={errorMessage.profile_description}
             />
           </View>
         </KeyboardAvoidingView>

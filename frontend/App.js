@@ -27,7 +27,7 @@ function HomeTabs() {
         tabBarActiveTintColor: '#7CA8F8',
         tabBarInactiveTintColor: '#aaa',
         tabBarStyle: {
-          height: 60,
+          // height: 60, // Causes tabbar to overlap bottom buttons
           backgroundColor: '#ffffffff',
           borderColor: '#fff',
           borderWidth: 3,

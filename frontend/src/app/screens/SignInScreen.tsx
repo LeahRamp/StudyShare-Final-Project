@@ -16,14 +16,14 @@ export default function SignInScreen() {
     email: '',
     password: '',
   })
-  const [errorMessage, setErrorMessage] = useState('')
+  const [errorMessage, setErrorMessage] = useState<{ [key: string]: string}>({})
   
   const handleSignIn = async () => {
-    setErrorMessage('');
+    setErrorMessage({});
     try {
       await signIn(form.email, form.password);
     } catch (error) {
-      setErrorMessage(error.message || "Unknown Error");
+      setErrorMessage(error.fieldErrors || {});
     }
   }
 
@@ -36,7 +36,7 @@ export default function SignInScreen() {
         >
           <LogoWithIcon />
           <View style={styles.inputs}>
-              <Text style={styles.error}>{errorMessage}</Text>
+            <Text style={styles.error}>{errorMessage.message}</Text>
             <InputBox
               ref={emailRef}
               type='email'
