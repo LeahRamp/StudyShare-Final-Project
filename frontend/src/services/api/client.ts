@@ -2,6 +2,8 @@ import axios from 'axios';
 import { clearTokens, getAccessToken, getRefreshToken, saveTokens } from '../tokenService';
 import { processDrfErrors } from '../../utils/processDrfErrors';
 
+const ApiUrl = "http://<local-ip>:8000/api" //TODO: Replace this with the ip of the backend server (your local ip)
+
 const PROTECTED_PATHS = [
   "user/",
   "reset-password/",
@@ -15,7 +17,7 @@ const isProtected = (url?: string) => {
 
 
 export const api = axios.create({
-  baseURL: "http://192.168.1.62:8000/api", // Will probably need changed
+  baseURL: ApiUrl, // Will probably need changed
   timeout: 10000,
 });
 
